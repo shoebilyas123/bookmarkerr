@@ -1,8 +1,18 @@
 import express, { RequestHandler } from 'express';
-import User from '../models/user';
+import User, { UserType } from '../models/user';
 import { AuthFormSchema, SignInSchema } from '../lib/zod';
 import { signAuthToken } from '../lib/auth';
 
+const transformUserForClient: (_: UserType) => Partial<UserType> = (
+  user_doc: UserType
+) => {
+  return {
+    name: user_doc.name,
+    _id: user_doc._id,
+    createdAt: user_doc.createdAt,
+    email: user_doc.email,
+  };
+};
 export const login: RequestHandler = async (
   req: express.Request,
   res: express.Response
@@ -13,38 +23,41 @@ export const login: RequestHandler = async (
   });
 
   if (!validatedFields.success) {
-    return res.status(400).json({
+    res.status(400).json({
       errors: { ...validatedFields.error.flatten().fieldErrors, auth: [] },
       message: 'Cannot login user.',
     });
+    return;
   }
 
   const { email, password } = validatedFields.data;
+  console.log({ email, password });
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'User not found' });
+      return;
     }
 
     if (!(await (user as any).isCorrectPassword(password, user.password))) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: 'Invalid credentials' });
+
+      return;
     }
 
     const token = signAuthToken(user._id);
-    const res_user = {
-      email: user.email,
-      name: user.name,
-      createdAt: user.createdAt,
-      _id: user._id,
-    };
-    return res.status(200).json({ user: res_user, token });
+    const res_user = transformUserForClient(user);
+
+    res.status(200).json({ user: res_user, token });
+    return;
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    res.status(500).json({
       errors: [error],
       message: 'Something went wrong',
     });
+    return;
   }
 };
 export const register: RequestHandler = async (
@@ -58,32 +71,40 @@ export const register: RequestHandler = async (
   });
 
   if (!validatedFields.success) {
-    return res.status(400).json({
+    res.status(400).json({
       errors: { ...validatedFields.error.flatten().fieldErrors, auth: [] },
       message: 'Cannot register user.',
     });
+    return;
   }
 
   try {
     const { email, password, name } = validatedFields.data;
 
     if (!!(await User.findOne({ email }))) {
-      return res.status(400).json({
+      res.status(400).json({
         errors: { auth: ['Email already exists!'] },
         message: 'Cannot register user',
       });
+      return;
     }
 
     const newUser = await User.create({ email, password, name });
     const token = signAuthToken(newUser.id);
 
-    return res.status(201).json({ user: newUser, token });
+    res.status(201).json({
+      user: transformUserForClient(newUser),
+      token,
+    });
+    return;
   } catch (error) {
     console.log(error);
 
-    return res.status(500).json({
+    res.status(500).json({
       errors: [error],
       message: 'Internal Server Error',
     });
+
+    return;
   }
 };

@@ -11,10 +11,11 @@ export const createNew = async (req: Request, res: Response) => {
   });
 
   if (!validatedFields.success) {
-    return res.status(400).json({
+    res.status(400).json({
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Cannot create folder.',
     });
+    return;
   }
 
   const { name } = validatedFields.data;
@@ -29,20 +30,23 @@ export const createNew = async (req: Request, res: Response) => {
     const folder_doc = await Folder.findOne({ name: folderPayload.name });
 
     if (folder_doc && folder_doc._id) {
-      return res.status(400).json({
+      res.status(400).json({
         errors: { name: ['Folder already exists.'] },
         message: 'Cannot create folder.',
       });
+      return;
     }
 
     const newFolder = await Folder.create(folderPayload);
-    return res.status(201).json({ folder: newFolder });
+    res.status(201).json({ folder: newFolder });
+    return;
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    res.status(500).json({
       errors: [error],
       message: 'Something went wrong',
     });
+    return;
   }
 };
 
@@ -66,7 +70,8 @@ export const getAll: RequestHandler = async (req: Request, res: Response) => {
     articles: f.articles.length as number,
   }));
 
-  return res.status(200).json({ folders: folders_transformed });
+  res.status(200).json({ folders: folders_transformed });
+  return;
 };
 export const getOne: RequestHandler = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -76,7 +81,8 @@ export const getOne: RequestHandler = async (req: Request, res: Response) => {
     user: (req as any).user?._id,
   }).populate('user', 'email name _id');
 
-  return res.status(200).json({ folder });
+  res.status(200).json({ folder });
+  return;
 };
 
 export const addNewArticle: RequestHandler = async (
@@ -89,15 +95,17 @@ export const addNewArticle: RequestHandler = async (
     });
 
     if (!validatedFields.success) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Incorrect URL..',
       });
+      return;
     }
 
     if (!req.body.folderId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Folder not specified.',
       });
+      return;
     }
 
     const { url } = validatedFields.data;
@@ -110,23 +118,27 @@ export const addNewArticle: RequestHandler = async (
     const folder = await Folder.findOne({ _id: req.body.folderId });
 
     if ((req as any).user._id.toString() !== folder.user.toString()) {
-      return res.status(401).json({ errors: ['Cannot add article.'] });
+      res.status(401).json({ errors: ['Cannot add article.'] });
+      return;
     }
 
     if (!folder.articles.some((art: Article) => art.url === url)) {
       folder.articles = [...folder.articles, { ...article_payload }];
     } else {
-      return res.status(200).json({ message: 'Bookmark already exists.' });
+      res.status(200).json({ message: 'Bookmark already exists.' });
+      return;
     }
 
     await folder.save();
-    return res.status(200).json({ message: 'Bookmark added to folder' });
+    res.status(200).json({ message: 'Bookmark added to folder' });
+    return;
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
+    res.status(500).json({
       errors: [error],
       message: 'Something went wrong',
     });
+    return;
   }
 };
 

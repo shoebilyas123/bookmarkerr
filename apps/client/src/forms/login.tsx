@@ -10,21 +10,48 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import instance from '@/lib/api';
-import React, { FormEvent, useState } from 'react';
+import { authState } from '@/store/auth';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [auth, setAuth] = useRecoilState(authState);
+  const navigate = useNavigate();
+
+  if (auth.token) {
+    return <Navigate to="/portal" />;
+  }
+
+  useEffect(() => {
+    if (auth.token) {
+      navigate('/portal');
+    }
+  }, [auth]);
 
   const loginHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await instance.post('/auth/login', {
+      const { data } = await instance.post('/auth/login', {
         email,
         password,
       });
 
-      console.log(res);
+      const authItem = {
+        user: {
+          _id: data.user._id,
+          email: data.user.email,
+          name: data.user.name,
+          createdAt: data.user.createdAt,
+        },
+        token: data.token,
+      };
+      setAuth(authItem);
+
+      localStorage.setItem('auth', JSON.stringify(authItem));
+      navigate('/portal');
     } catch (err) {
       console.log(err);
     }
