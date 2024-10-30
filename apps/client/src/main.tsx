@@ -11,8 +11,14 @@ import LoginPage from './pages/auth/login.tsx';
 import RegisterPage from './pages/auth/register.tsx';
 
 import { RecoilRoot } from 'recoil';
+import InDev from './pages/errors/InDev.tsx';
 
 const router = createBrowserRouter([
+  {
+    path: '/portal/my-account/*',
+    element: <InDev />,
+    errorElement: <InDev />,
+  },
   {
     path: '/portal',
     element: (

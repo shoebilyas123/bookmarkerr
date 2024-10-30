@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import { LogOutIcon } from 'lucide-react';
 import { SIDEBAR_GROUPS } from '@/lib/ui/sidebar';
+import { Link } from 'react-router-dom';
 
 export default function AppSidebar() {
   return (
@@ -39,10 +40,10 @@ export default function AppSidebar() {
                         }
                         asChild
                       >
-                        <a href={item.action.href}>
+                        <Link to={item.action.href}>
                           <item.Icon />
                           <span>{item.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
