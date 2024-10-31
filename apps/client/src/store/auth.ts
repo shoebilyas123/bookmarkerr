@@ -1,4 +1,5 @@
 import { UserAuthenticated } from '@/types/db';
+import { Folder } from '@/types/folder';
 import { atom } from 'recoil';
 
 console.log(window);
@@ -11,7 +12,16 @@ const authInitialState: UserAuthenticated =
         user: null,
       };
 
+const folderInitialState: (Omit<Folder, 'articles'> & { articles: number })[] =
+  [];
 export const authState = atom<UserAuthenticated>({
   key: 'auth:user',
   default: authInitialState,
+});
+
+export const folderState = atom<
+  (Omit<Folder, 'articles'> & { articles: number })[]
+>({
+  key: 'user:folders',
+  default: folderInitialState,
 });

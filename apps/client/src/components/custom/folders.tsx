@@ -1,21 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FolderOpen, MoreVertical } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { authState, folderState } from '@/store/auth';
+import instance from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { Folder } from '@/types/folder';
 
 export default function Folders() {
-  const folders: Array<Omit<Folder, 'articles'> & { articles: number }> = [
-    {
-      name: 'My folder',
-      _id: '1',
-      articles: 4,
-      user: { _id: 'user_id' },
-    },
-  ];
+  const auth = useRecoilValue(authState);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [folders, setFolders] = useRecoilState(folderState);
 
-  return (
+  const getMyFolders = async () => {
+    try {
+      setLoading(true);
+      const { data } = await instance.get(`/folder/all`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
+      setFolders(data.folders);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getMyFolders();
+  }, []);
+
+  return loading ? (
+    <>Loading...</>
+  ) : !folders || folders.length < 1 ? (
+    <div className="w-[100%] h-[100%] flex items-center justify-center ">
+      <div className="mt-12 flex flex-col items-center space-y-3">
+        <p className="text-2xl text-neutral-500 font-medium">
+          This section looks so neat and clean!
+        </p>
+        <p className="text-xl text-neutral-500 ">
+          Create on "New Folder" button to add a folder
+        </p>
+      </div>
+    </div>
+  ) : (
     <div className="grid gap-2 grid-cols-1 md:grid-cols-4">
       {folders.map((folder) => (
         <Card
@@ -36,8 +65,6 @@ export default function Folders() {
               </p>
             </div>
           </Link>
-
-          {/* ADd a dropdowm here */}
           <div>
             <MoreVertical size={18} />
           </div>

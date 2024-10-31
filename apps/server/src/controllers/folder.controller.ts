@@ -27,7 +27,10 @@ export const createNew = async (req: Request, res: Response) => {
   };
 
   try {
-    const folder_doc = await Folder.findOne({ name: folderPayload.name });
+    const folder_doc = await Folder.findOne({
+      name: folderPayload.name,
+      user: (req as any).user?._id,
+    });
 
     if (folder_doc && folder_doc._id) {
       res.status(400).json({
