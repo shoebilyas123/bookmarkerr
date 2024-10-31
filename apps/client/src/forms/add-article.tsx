@@ -8,27 +8,66 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { PlusIcon } from 'lucide-react';
+import instance from '@/lib/api';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { FormEvent, useState } from 'react';
+import { authState } from '@/store/auth';
+import { useParams } from 'react-router-dom';
 
-export default function AddArticle() {
+export default function AddArticle(props: { onAdd: () => void }) {
+  const params = useParams();
+  const auth = useRecoilValue(authState);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [url, setURL] = useState<string>('');
+
+  const createNewHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await instance.post(
+        '/folder/article/add',
+        {
+          url,
+          folderId: params.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+      props.onAdd();
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Popover>
       <PopoverTrigger>
         <Button variant={'default'} className="w-full flex-grow ">
-          <PlusIcon /> New Article
+          <PlusIcon /> Bookmark
         </Button>
       </PopoverTrigger>
       <PopoverContent asChild>
-        <form className="flex flex-col space-y-2">
+        <form onSubmit={createNewHandler} className="flex flex-col space-y-2">
           <div>
             <Label htmlFor="article-add-url">URL</Label>
-            <Input name="url" id="article-add-url" placeholder="Enter URL..." />
+            <Input
+              name="url"
+              id="article-add-url"
+              placeholder="Enter URL..."
+              value={url}
+              onChange={(e) => setURL(e.target.value)}
+              disabled={loading}
+            />
           </div>
           <div className="w-full flex">
             {/* {state?.error && (
               <p className="text-sm text-red-700">{state?.error}</p>
             )} */}
           </div>
-          <Button type="submit" variant={'outline'}>
+          <Button disabled={loading} type="submit" variant={'outline'}>
             Save
           </Button>
         </form>

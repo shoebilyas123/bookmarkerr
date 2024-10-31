@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AddArticle from '@/forms/add-article';
 import { Edit, MoreVertical, Trash2 } from 'lucide-react';
@@ -9,49 +9,59 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import SearchBar from '@/forms/search';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import instance from '@/lib/api';
+import { authState } from '@/store/auth';
+import { Folder } from '@/types/folder';
+import { useParams } from 'react-router-dom';
 
 export default function FolderData() {
-  const searchParams = { query: '' };
-  const articles = [
-    {
-      _id: 1,
-      title: 'New Title',
-      url: 'http://google.com',
-    },
-    {
-      _id: 2,
+  const auth = useRecoilValue(authState);
+  const params = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [folderData, setFolderData] = useState<Folder | null>(null);
 
-      title: 'New Title',
-      url: 'http://google.com',
-    },
-    {
-      _id: 3,
+  const getFolderData = async () => {
+    try {
+      setLoading(true);
+      const { data } = await instance.get(`/folder/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
+      setFolderData(data.folder);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    getFolderData();
+  }, []);
 
-      title: 'New Title',
-      url: 'http://google.com',
-    },
-    {
-      _id: 4,
-
-      title: 'New Title',
-      url: 'http://google.com',
-    },
-  ];
   return (
     <div className="w-full flex flex-col">
       <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-1 mb-4">
         <SearchBar />
-        <AddArticle />
+        <AddArticle onAdd={getFolderData} />
       </div>
 
-      <div className="grid gap-1 grid-cols-1">
-        {articles
-          .filter(
-            (art) =>
-              art.title.includes(searchParams.query || '') ||
-              art.url.includes(searchParams.query || '')
-          )
-          .map((article) => (
+      {loading ? (
+        <>Loading...</>
+      ) : !folderData || folderData?.articles?.length < 1 ? (
+        <div className="w-[100%] h-[100%] flex items-center justify-center ">
+          <div className="mt-12 flex flex-col items-center space-y-3">
+            <p className="text-2xl text-neutral-500 font-medium">
+              You have not bookmarked any pages!
+            </p>
+            <p className="text-xl text-neutral-500 ">
+              Create on "+ Bookmark" button to bookmark a page
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-1 grid-cols-1">
+          {folderData.articles.map((article) => (
             <div
               key={article.url}
               className="flex items-center w-full justify-between bg-white hover:bg-neutral-100 rounded-md border p-4"
@@ -78,7 +88,8 @@ export default function FolderData() {
               </DropdownMenu>
             </div>
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

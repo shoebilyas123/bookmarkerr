@@ -113,19 +113,17 @@ export const addNewArticle: RequestHandler = async (
 
     const { url } = validatedFields.data;
 
-    const $ = await cheerio.fromURL(url);
-    const title = $('title').text();
-
-    const article_payload = { url: url, title };
-
     const folder = await Folder.findOne({ _id: req.body.folderId });
 
     if ((req as any).user._id.toString() !== folder.user.toString()) {
       res.status(401).json({ errors: ['Cannot add article.'] });
       return;
     }
-
     if (!folder.articles.some((art: Article) => art.url === url)) {
+      const $ = await cheerio.fromURL(url);
+      const title = $('title').text();
+
+      const article_payload = { url: url, title };
       folder.articles = [...folder.articles, { ...article_payload }];
     } else {
       res.status(200).json({ message: 'Bookmark already exists.' });
