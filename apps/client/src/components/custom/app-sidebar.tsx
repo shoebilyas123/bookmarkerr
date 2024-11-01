@@ -1,5 +1,4 @@
 import {
-  SidebarProvider,
   Sidebar,
   SidebarContent,
   SidebarFooter,
