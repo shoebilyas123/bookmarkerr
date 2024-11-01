@@ -1,4 +1,4 @@
-# Bookmarkerr App Backend
+# BookMarkerr App Backend
 
 This is the backend server that includes auth handling for the bookmarkerr app. More on bookmarkerr [here]().
 

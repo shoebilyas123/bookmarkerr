@@ -14,6 +14,7 @@ import {
 import { LogOutIcon } from 'lucide-react';
 import { SIDEBAR_GROUPS } from '@/lib/ui/sidebar';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from './logo';
 
 export default function AppSidebar() {
   const navigate = useNavigate();
@@ -23,74 +24,60 @@ export default function AppSidebar() {
     navigate(0);
   };
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader className="px-4 ">
-          <div className="flex items-center space-x-2">
-            <img
-              src={'/Images/Bookmarkerr_Logo_100x100.png'}
-              width={25}
-              height={25}
-              className="shadow-md rounded-full"
-            />
-            <Link to={'/portal'} className="font-medium text-slate-700">
-              Bookmarkerr <sub>Beta 0.0.1</sub>
-            </Link>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          {SIDEBAR_GROUPS.map((grp, index) => (
-            <SidebarGroup key={grp.name + index}>
-              <SidebarGroupLabel>{grp.name}</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {grp.menu.map((item, index) => (
-                    <SidebarMenuItem
-                      key={index + item.title + Math.random().toString(6)}
+    <Sidebar>
+      <SidebarHeader className="px-4 ">
+        <div className="flex items-center space-x-2">
+          <Logo />
+          <Link to={'/portal'} className="font-medium text-slate-700">
+            BookMarkerr <sub>Beta 0.0.1</sub>
+          </Link>
+        </div>
+      </SidebarHeader>
+      <SidebarContent>
+        {SIDEBAR_GROUPS.map((grp, index) => (
+          <SidebarGroup key={grp.name + index}>
+            <SidebarGroupLabel>{grp.name}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {grp.menu.map((item, index) => (
+                  <SidebarMenuItem
+                    key={index + item.title + Math.random().toString(6)}
+                  >
+                    <SidebarMenuButton
+                      variant={
+                        item.variant as 'outline' | 'default' | null | undefined
+                      }
+                      asChild
                     >
-                      <SidebarMenuButton
-                        variant={
-                          item.variant as
-                            | 'outline'
-                            | 'default'
-                            | null
-                            | undefined
-                        }
-                        asChild
-                      >
-                        {item.action.target ? (
-                          <a
-                            href={item.action.href}
-                            target={item.action.target}
-                          >
-                            <item.Icon />
-                            <span>{item.title}</span>
-                          </a>
-                        ) : (
-                          <Link to={item.action.href}>
-                            <item.Icon />
-                            <span>{item.title}</span>
-                          </Link>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenuButton
-            onClick={logoutHandler}
-            variant="outline"
-            type="submit"
-          >
-            <LogOutIcon className="text-red-600" />
-            <span>Logout</span>
-          </SidebarMenuButton>
-        </SidebarFooter>
-      </Sidebar>
-    </SidebarProvider>
+                      {item.action.target ? (
+                        <a href={item.action.href} target={item.action.target}>
+                          <item.Icon />
+                          <span>{item.title}</span>
+                        </a>
+                      ) : (
+                        <Link to={item.action.href}>
+                          <item.Icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenuButton
+          onClick={logoutHandler}
+          variant="outline"
+          type="submit"
+        >
+          <LogOutIcon className="text-red-600" />
+          <span>Logout</span>
+        </SidebarMenuButton>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

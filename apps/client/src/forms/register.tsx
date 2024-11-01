@@ -1,3 +1,4 @@
+import Logo from '@/components/custom/logo';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,6 +23,7 @@ export default function RegisterForm() {
   const [name, setName] = useState('');
   const [auth, setAuth] = useRecoilState(authState);
   const navigate = useNavigate();
+  const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
 
   if (auth.token) {
     return <Navigate to="/portal" />;
@@ -55,21 +57,26 @@ export default function RegisterForm() {
 
       localStorage.setItem('auth', JSON.stringify(authItem));
       navigate('/portal');
-    } catch (err) {
+    } catch (err: any) {
       setAuth({ user: null, token: null });
       console.log(err);
+      setErrors(err.response.data.errors);
       toast.error((err as any).response.data.message);
     }
   };
 
   return (
-    <form onSubmit={registerHandler}>
+    <form onSubmit={registerHandler} onChange={() => setErrors(null)}>
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>Get Started</CardTitle>
-          <CardDescription>
-            Welcome to Artica - Let&apos;s create your account
-          </CardDescription>
+          <CardTitle className="flex items-center justify-between space-x-2 mb-3">
+            <div className="flex items-center">
+              <Logo />
+              <span className="text-slate-800">BookMarkerr App</span>
+            </div>
+            <sub className="mb-2 text-slate-600">Beta 0.0.1</sub>
+          </CardTitle>
+          <CardDescription>Let&apos;s create your account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -85,12 +92,12 @@ export default function RegisterForm() {
             />
 
             <div id="name-error" aria-live="polite" aria-atomic="true">
-              {/* {state.errors?.name &&
-                state.errors.name.map((error: string) => (
+              {errors?.name &&
+                errors.name.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
                   </p>
-                ))} */}
+                ))}
             </div>
           </div>
           <div>
@@ -106,12 +113,12 @@ export default function RegisterForm() {
             />
 
             <div id="email-error" aria-live="polite" aria-atomic="true">
-              {/* {state.errors?.email &&
-                state.errors.email.map((error: string) => (
+              {errors?.email &&
+                errors.email.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
                   </p>
-                ))} */}
+                ))}
             </div>
           </div>
           <div>
@@ -126,12 +133,12 @@ export default function RegisterForm() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <div id="pass-error" aria-live="polite" aria-atomic="true">
-              {/* {state.errors?.password &&
-                state.errors.password.map((error: string) => (
+              {errors?.password &&
+                errors.password.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
                   </p>
-                ))} */}
+                ))}
             </div>
           </div>
         </CardContent>

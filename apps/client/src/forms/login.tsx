@@ -1,3 +1,4 @@
+import Logo from '@/components/custom/logo';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -53,7 +54,7 @@ export default function LoginForm() {
 
       localStorage.setItem('auth', JSON.stringify(authItem));
       navigate('/portal');
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
       toast.error((err as any).response.data.message);
     }
@@ -63,7 +64,13 @@ export default function LoginForm() {
     <form onSubmit={loginHandler}>
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>Welcome Back!</CardTitle>
+          <CardTitle className="flex items-center justify-between space-x-2 mb-3">
+            <div className="flex items-center">
+              <Logo />
+              <span className="text-slate-800">BookMarkerr App</span>
+            </div>
+            <sub className="mb-2 text-slate-600">Beta 0.0.1</sub>
+          </CardTitle>
           <CardDescription>Let&apos;s log you in!</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
