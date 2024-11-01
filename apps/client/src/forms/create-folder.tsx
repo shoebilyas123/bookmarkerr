@@ -19,10 +19,13 @@ export default function CreateFolderForm() {
   const auth = useRecoilValue(authState);
   const [_, setFolders] = useRecoilState(folderState);
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string[]> | null>(null);
 
   const createNewHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrors(null);
     try {
       setLoading(true);
       const { data } = await instance.post(
@@ -36,10 +39,15 @@ export default function CreateFolderForm() {
           },
         }
       );
-      setFolders((prev) => [...prev, data.folder]);
+      setFolders((prev) => [
+        ...prev,
+        { ...data.folder, articles: data.folder.articles.length },
+      ]);
       toast.success('Folder created.');
+      setOpen(false);
     } catch (error: any) {
       console.log(error);
+      setErrors(error.response.data.errors);
       toast.error(error.response.data.message);
     } finally {
       setLoading(false);
@@ -47,14 +55,18 @@ export default function CreateFolderForm() {
   };
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover open={open}>
+      <PopoverTrigger onClick={() => setOpen(!open)}>
         <Button className="flex-grow w-full my-2">
           <FolderPlus /> New Folder
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <form onSubmit={createNewHandler} className="space-y-6">
+        <form
+          onSubmit={createNewHandler}
+          className="space-y-6"
+          onChangeCapture={() => setErrors(null)}
+        >
           <div className="space-y-4">
             <div className="space-y-1">
               <Label htmlFor="folder-name">Name</Label>
@@ -68,12 +80,12 @@ export default function CreateFolderForm() {
                 onChange={(e) => setName(e.target.value)}
               />
               <div id="name-error" aria-live="polite" aria-atomic="true">
-                {/* {state?.errors?.name &&
-                  state?.errors.name.map((error: string) => (
+                {errors?.name &&
+                  errors.name.map((error: string) => (
                     <p className="mt-2 text-sm text-red-500" key={error}>
                       {error}
                     </p>
-                  ))} */}
+                  ))}
               </div>
             </div>
           </div>

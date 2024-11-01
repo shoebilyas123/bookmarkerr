@@ -62,7 +62,7 @@ export default function Folders() {
             <div className="flex flex-col items-between">
               <p className="text-sm font-medium">{folder.name}</p>
               <p className="text-xs text-gray-500">
-                {folder.articles} articles
+                {folder?.articles || 0} articles
               </p>
             </div>
           </Link>

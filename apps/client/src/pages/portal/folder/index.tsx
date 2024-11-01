@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import AddArticle from '@/forms/add-article';
-import { Edit, MoreVertical, Trash2 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 import SearchBar from '@/forms/search';
 import { useRecoilValue } from 'recoil';
 import instance from '@/lib/api';
@@ -37,6 +30,7 @@ export default function FolderData() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     getFolderData();
   }, []);
