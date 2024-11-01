@@ -19,7 +19,8 @@ export async function authorize(
   }
 
   if (!token) {
-    return next(new Error(' log in to get access.'));
+    res.status(401).json({ message: 'Please log in to get access' });
+    return;
   }
 
   // 2) Verify the jwt and get the user id.
@@ -29,12 +30,14 @@ export async function authorize(
   ) as jwt.JwtPayload;
 
   if (Date.now() < (decoded.exp as number)) {
-    return next(new Error('Token expired. Please log in again.'));
+    res.status(401).json({ message: 'Token expired. Please log in again.' });
+    return;
   }
   // 3) Check if user still exists
   const currentUser = await User.findById((decoded as any).id);
   if (!currentUser) {
-    return next(new Error('User no longer exists.'));
+    res.status(404).json({ message: 'User not found. Please register' });
+    return;
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
@@ -42,12 +45,3 @@ export async function authorize(
   res.locals.user = currentUser;
   next();
 }
-
-// {
-//   "user": {
-//     "email": "shoebilyas123@gmail.com",
-//     "createdAt": "2024-10-28T13:41:07.065Z",
-//     "_id": "671f94735065a8180fa0ede3"
-//   },
-//   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MWY5NDczNTA2NWE4MTgwZmEwZWRlMyIsImlhdCI6MTczMDEyMzE4NSwiZXhwIjoxNzMwMzgyMzg1fQ.y8DnU-LNp-OGtYQhTg5LBplOWIJBBqt6CY2rkUyE6Lg"
-// }

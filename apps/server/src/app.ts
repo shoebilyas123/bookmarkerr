@@ -13,6 +13,12 @@ app.use(
   })
 );
 
+app.use(async (err, req, res, next) => {
+  console.log(err);
+  res.status(500).json({ message: 'interval server error' });
+  return;
+});
+
 app.use('/api/v1/auth', routerAuth);
 app.use('/api/v1/folder', routerFolder);
 
