@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import instance from '@/lib/api';
 import { authState } from '@/store/auth';
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRecoilState } from 'recoil';
 

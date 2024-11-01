@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function SearchBar() {
   return (
     <div className="flex flex-row flex-grow items-center space-x-1 border shadow-sm rounded-md px-2">

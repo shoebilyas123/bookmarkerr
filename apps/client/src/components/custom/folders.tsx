@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { FolderOpen, MoreVertical } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { FolderOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { authState, folderState } from '@/store/auth';
 import instance from '@/lib/api';
 import { Card } from '@/components/ui/card';
-import { Folder } from '@/types/folder';
 import FolderDropdown from './folder-dropdown';
 
 export default function Folders() {

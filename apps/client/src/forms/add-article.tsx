@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 
 import { PlusIcon } from 'lucide-react';
 import instance from '@/lib/api';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { FormEvent, useState } from 'react';
 import { authState } from '@/store/auth';
 import { useParams } from 'react-router-dom';

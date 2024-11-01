@@ -1,16 +1,7 @@
-import React from 'react';
 import AppSidebar from './app-sidebar';
 import { useRecoilValue } from 'recoil';
 import { authState } from '@/store/auth';
-import { Navigate, redirect } from 'react-router-dom';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from '../ui/breadcrumb';
-import { AppBreadcrumb } from './breadcrumb';
+import { Navigate } from 'react-router-dom';
 
 export default function ProtectedLayout(props: { children: React.ReactNode }) {
   const auth = useRecoilValue(authState);
