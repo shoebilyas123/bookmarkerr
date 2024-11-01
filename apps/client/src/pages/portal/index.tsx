@@ -1,7 +1,7 @@
 import SearchBar from '@/forms/search';
-import React, { useEffect, useState } from 'react';
 import CreateFolderForm from '@/forms/create-folder';
 import Folders from '@/components/custom/folders';
+import { AppBreadcrumb } from '@/components/custom/breadcrumb';
 
 export default function PortalHome() {
   return (
@@ -10,6 +10,9 @@ export default function PortalHome() {
         <SearchBar />
         <CreateFolderForm />
       </div>
+      <AppBreadcrumb
+        routes={[{ name: 'Portal', href: '/portal', endpoint: false }]}
+      />
       <Folders />
     </main>
   );

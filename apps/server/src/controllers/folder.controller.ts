@@ -79,10 +79,16 @@ export const getAll: RequestHandler = async (req: Request, res: Response) => {
 export const getOne: RequestHandler = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  console.log(id);
   const folder = await Folder.findOne({
     _id: id,
     user: (req as any).user?._id,
   }).populate('user', 'email name _id');
+
+  if (!folder) {
+    res.status(404).json({ message: 'Folder not found!' });
+    return;
+  }
 
   res.status(200).json({ folder });
   return;

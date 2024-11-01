@@ -6,6 +6,7 @@ import NotFound from './pages/errors/404';
 import FolderData from './pages/portal/folder';
 import LoginPage from './pages/auth/login';
 import RegisterPage from './pages/auth/register';
+import instance from './lib/api';
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ export const router = createBrowserRouter([
     errorElement: <NotFound />,
   },
   {
-    path: '/portal/folder/:id',
+    path: '/portal/:id',
     element: (
       <ProtectedLayout>
         <FolderData />

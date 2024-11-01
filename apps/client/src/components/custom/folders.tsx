@@ -53,7 +53,7 @@ export default function Folders() {
         >
           <Link
             className="flex items-center space-x-1 flex-grow"
-            to={`/portal/folder/${folder._id}`}
+            to={`/portal/${folder._id}`}
           >
             <div>
               <FolderOpen size={36} className="text-white " fill="#334155" />

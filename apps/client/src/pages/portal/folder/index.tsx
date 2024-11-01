@@ -14,6 +14,7 @@ import instance from '@/lib/api';
 import { authState } from '@/store/auth';
 import { Folder } from '@/types/folder';
 import { useParams } from 'react-router-dom';
+import { AppBreadcrumb } from '@/components/custom/breadcrumb';
 
 export default function FolderData() {
   const auth = useRecoilValue(authState);
@@ -39,13 +40,28 @@ export default function FolderData() {
     getFolderData();
   }, []);
 
+  console.log(folderData);
+
   return (
     <div className="w-full flex flex-col">
       <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-1 mb-4">
         <SearchBar />
         <AddArticle onAdd={getFolderData} />
       </div>
-
+      <AppBreadcrumb
+        routes={[
+          { name: 'Portal', href: '/portal', endpoint: false },
+          ...(folderData
+            ? [
+                {
+                  name: folderData?.name,
+                  href: folderData?._id,
+                  endpoint: true,
+                },
+              ]
+            : []),
+        ]}
+      />
       {loading ? (
         <>Loading...</>
       ) : !folderData || folderData?.articles?.length < 1 ? (
