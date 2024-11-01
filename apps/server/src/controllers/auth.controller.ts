@@ -108,3 +108,53 @@ export const register: RequestHandler = async (
     return;
   }
 };
+
+const AuthEditSchema = AuthFormSchema.omit({ password: true });
+
+export const editInfo: RequestHandler = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const validatedFields = AuthEditSchema.safeParse({
+    email: req.body.email,
+    name: req.body.name,
+  });
+
+  if (!validatedFields.success) {
+    res.status(400).json({
+      errors: { ...validatedFields.error.flatten().fieldErrors, auth: [] },
+      message: 'Invalid inputs.',
+    });
+    return;
+  }
+
+  try {
+    const { email, name } = validatedFields.data;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(400).json({
+        errors: { auth: ['Email does not exist!'] },
+        message: 'User does not exist ',
+      });
+      return;
+    }
+
+    user.name = name;
+    user.email = email;
+    await user.save();
+    res.status(201).json({
+      user: transformUserForClient(user),
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      errors: [error],
+      message: 'Internal Server Error',
+    });
+
+    return;
+  }
+};

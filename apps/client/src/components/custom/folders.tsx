@@ -7,6 +7,7 @@ import { authState, folderState } from '@/store/auth';
 import instance from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { Folder } from '@/types/folder';
+import FolderDropdown from './folder-dropdown';
 
 export default function Folders() {
   const auth = useRecoilValue(authState);
@@ -66,7 +67,13 @@ export default function Folders() {
             </div>
           </Link>
           <div>
-            <MoreVertical size={18} />
+            <FolderDropdown
+              name={folder.name}
+              onDelete={(id) =>
+                setFolders((prev) => prev.filter((f) => f._id !== id))
+              }
+              folderId={folder._id}
+            />
           </div>
         </Card>
       ))}

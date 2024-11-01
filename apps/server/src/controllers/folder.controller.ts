@@ -53,10 +53,32 @@ export const createNew = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteOne: RequestHandler = async (
+export const deleteOneArticle: RequestHandler = async (
   req: Request,
   res: Response
-) => {};
+) => {
+  const { url, folderId } = req.body;
+  try {
+    const folder = await Folder.findOne({
+      _id: folderId,
+      user: (req as any).user?._id,
+    });
+
+    if (!folder) {
+      res.status(404).json({ message: 'Folder not found!' });
+      return;
+    }
+
+    folder.articles = folder.articles.filter((art) => art.url !== url);
+    await folder.save();
+    res.status(200).json({ message: 'Bookmark removed successfully.' });
+    return;
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Something went wrong.' });
+    return;
+  }
+};
 export const getAll: RequestHandler = async (req: Request, res: Response) => {
   const { search } = req.query;
   const folders = await Folder.find({
@@ -132,7 +154,7 @@ export const addNewArticle: RequestHandler = async (
       const article_payload = { url: url, title };
       folder.articles = [...folder.articles, { ...article_payload }];
     } else {
-      res.status(200).json({ message: 'Bookmark already exists.' });
+      res.status(400).json({ message: 'Bookmark already exists.' });
       return;
     }
 
@@ -149,6 +171,24 @@ export const addNewArticle: RequestHandler = async (
   }
 };
 
+export const deleteOneFolder: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { folderId } = req.body;
+  try {
+    await Folder.findOneAndDelete({
+      _id: folderId,
+    });
+
+    res.status(200).json({ message: 'Folder deleted successfully.' });
+    return;
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Something went wrong.' });
+    return;
+  }
+};
 // {
 //   "folderId": "671f9694681d9f82e0dea721",
 //    "url":"https://netflix.com"

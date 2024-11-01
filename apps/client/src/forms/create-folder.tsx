@@ -13,6 +13,7 @@ import {
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { authState, folderState } from '@/store/auth';
 import instance from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function CreateFolderForm() {
   const auth = useRecoilValue(authState);
@@ -36,7 +37,10 @@ export default function CreateFolderForm() {
         }
       );
       setFolders((prev) => [...prev, data.folder]);
-    } catch (error) {
+      toast.success('Folder created.');
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }

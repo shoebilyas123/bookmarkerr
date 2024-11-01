@@ -9,12 +9,13 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import SearchBar from '@/forms/search';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import instance from '@/lib/api';
 import { authState } from '@/store/auth';
-import { Folder } from '@/types/folder';
+import { Article, Folder } from '@/types/folder';
 import { useParams } from 'react-router-dom';
 import { AppBreadcrumb } from '@/components/custom/breadcrumb';
+import { BookmarkDropdown } from '@/components/custom/bookmark-dropdown';
 
 export default function FolderData() {
   const auth = useRecoilValue(authState);
@@ -39,8 +40,6 @@ export default function FolderData() {
   useEffect(() => {
     getFolderData();
   }, []);
-
-  console.log(folderData);
 
   return (
     <div className="w-full flex flex-col">
@@ -89,19 +88,19 @@ export default function FolderData() {
               >
                 {article.title}
               </a>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <MoreVertical className="text-neutral-500" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Edit className="text-neutral-500" /> Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Trash2 className="text-neutral-500" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <BookmarkDropdown
+                url={article.url}
+                name={article.title}
+                folderId={folderData._id}
+                onDelete={(e) => {
+                  setFolderData((prev: any) => ({
+                    ...prev,
+                    articles: prev?.articles.filter(
+                      (art: Article) => art.url !== e
+                    ),
+                  }));
+                }}
+              />
             </div>
           ))}
         </div>

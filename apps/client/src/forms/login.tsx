@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import instance from '@/lib/api';
 import { authState } from '@/store/auth';
 import React, { FormEvent, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -54,6 +55,7 @@ export default function LoginForm() {
       navigate('/portal');
     } catch (err) {
       console.log(err);
+      toast.error((err as any).response.data.message);
     }
   };
 

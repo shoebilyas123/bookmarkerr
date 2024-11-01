@@ -7,11 +7,16 @@ import FolderData from './pages/portal/folder';
 import LoginPage from './pages/auth/login';
 import RegisterPage from './pages/auth/register';
 import instance from './lib/api';
+import MyProfile from './pages/portal/my-account/profile';
 
 export const router = createBrowserRouter([
   {
     path: '/portal/my-account/*',
-    element: <InDev />,
+    element: (
+      <ProtectedLayout>
+        <MyProfile />
+      </ProtectedLayout>
+    ),
     errorElement: <InDev />,
   },
   {

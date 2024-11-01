@@ -13,6 +13,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { FormEvent, useState } from 'react';
 import { authState } from '@/store/auth';
 import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function AddArticle(props: { onAdd: () => void }) {
   const params = useParams();
@@ -36,8 +37,11 @@ export default function AddArticle(props: { onAdd: () => void }) {
           },
         }
       );
+      toast.success('Bookmark added.');
       props.onAdd();
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }

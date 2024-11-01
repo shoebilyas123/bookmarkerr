@@ -1,4 +1,4 @@
-import { HomeIcon, Settings2, User2 } from 'lucide-react';
+import { Github, HomeIcon, User2 } from 'lucide-react';
 
 interface SidebarGroupMenu {
   // @ts-ignore
@@ -7,6 +7,7 @@ interface SidebarGroupMenu {
   variant?: 'outline' | 'default' | null;
   action: {
     href: string;
+    target?: '_blank';
   };
 }
 interface SidebarGroupData {
@@ -37,12 +38,26 @@ export const SIDEBAR_GROUPS: SidebarGroupData[] = [
           href: '/portal/my-account/profile',
         },
       },
+      // {
+      //   Icon: Settings2,
+      //   title: 'Settings',
+      //   variant: 'default',
+      //   action: {
+      //     href: '/portal/my-account/settings',
+      //   },
+      // },
+    ],
+  },
+
+  {
+    name: 'Contribute',
+    menu: [
       {
-        Icon: Settings2,
-        title: 'Settings',
-        variant: 'default',
+        Icon: Github,
+        title: 'Github Repo',
         action: {
-          href: '/portal/my-account/settings',
+          href: 'https://github.com/shoebilyas123/bookmarkerr',
+          target: '_blank',
         },
       },
     ],
